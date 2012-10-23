@@ -1,0 +1,206 @@
+<style>
+
+/* Reset: */
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+
+
+.nav {
+  position: absolute;
+  background-color: black;
+  color: white;
+  display: none;
+  text-align: center;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.page {
+  display: none;
+  margin: 40px;
+}
+</style>
+
+<html><body>
+<div class="page" id="main">Main contents</div>
+<div class="page" id="up">Up contents</div>
+<div class="page" id="right1">Right 1 contents</div>
+<div class="page" id="right2">Right 2 contents</div>
+</body></html>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+
+<script>
+function install_nav(specs) {
+  var map = {};
+
+  var default_nav_size = '40px';
+
+  for(var i in specs) {
+    var spec = specs[i];
+
+    var x = spec.pos[0];
+    var y = spec.pos[1];
+
+    if (!map[x]) map[x] = {};
+    map[x][y] = spec;
+
+    var elem = $('<div class="nav"></div>');
+    elem.attr('id', 'nav_' + x + '_' + y);
+    elem.html('<div>' + spec.desc + '</div>');
+    elem.appendTo('body');
+  }
+
+  function map2spec(x, y) {
+    var spec = map[x];
+    if (!spec) return;
+    spec = spec[y];
+    if (!spec) return;
+    return spec;
+  }
+
+  function jump(x, y) {
+console.log("jumping to " + x + ' / ' + y);
+    var spec = map2spec(x, y);
+    if (!spec) return;
+
+    $('.nav').hide().css('top', '').css('bottom', '').css('left', '').css('right', '');
+    $('.page').hide();
+    $('#' + spec.page).show();
+
+    var up_spec = map2spec(x, y - 1);
+    if (up_spec) {
+      $('#nav_' + x + '_' + (y - 1))
+       .css('top', '0px')
+       .css('height', default_nav_size)
+       .css('width', '100%')
+       .show();
+
+     $('#nav_' + x + '_' + (y - 1) + ' div')
+      .css('-webkit-transform', '')
+      .css('-moz-transform', '');
+    }
+
+    var down_spec = map2spec(x, y + 1);
+    if (down_spec) {
+      $('#nav_' + x + '_' + (y + 1))
+       .css('bottom', '0px')
+       .css('height', default_nav_size)
+       .css('width', '100%')
+       .show();
+
+     $('#nav_' + x + '_' + (y + 1) + ' div')
+      .css('-webkit-transform', '')
+      .css('-moz-transform', '');
+    }
+
+    var right_spec = map2spec(x + 1, y);
+    if (right_spec) {
+      $('#nav_' + (x + 1) + '_' + y)
+       .css('top', '0px')
+       .css('right', '0px')
+       .css('height', '100%')
+       .css('width', default_nav_size)
+       .show();
+
+     $('#nav_' + (x + 1) + '_' + y + ' div')
+      .css('-webkit-transform', 'rotate(90deg)')
+      .css('-moz-transform', 'rotate(90deg)');
+    }
+
+    var left_spec = map2spec(x - 1, y);
+    if (left_spec) {
+      $('#nav_' + (x - 1) + '_' + y)
+       .css('top', '0px')
+       .css('left', '0px')
+       .css('height', '100%')
+       .css('width', default_nav_size)
+       .show();
+
+     $('#nav_' + (x - 1) + '_' + y + ' div')
+      .css('-webkit-transform', 'rotate(-90deg)')
+      .css('-moz-transform', 'rotate(-90deg)');
+    }
+  }
+
+  $('body').delegate('.nav', 'click', function(){
+    var id = $(this).attr('id');
+    var m = id.match(/^nav_([-\d]+)_([-\d]+)$/);
+    if (!m) return;
+    jump(parseInt(m[1]), parseInt(m[2]));
+  });
+
+  jump(0, 0);
+}
+
+install_nav([
+  {
+    pos: [0, 0],
+    page: "main",
+    desc: "Main Page"
+  },
+  {
+    pos: [0, -1],
+    page: "up",
+    desc: "Upper Page"
+  },
+  {
+    pos: [1, 0],
+    page: "right1",
+    desc: "R1"
+  },
+  {
+    pos: [2, 0],
+    page: "right2",
+    desc: "R2"
+  }
+]);
+</script>

@@ -1,4 +1,0 @@
-navtab
-======
-
-Navigable Tab UI

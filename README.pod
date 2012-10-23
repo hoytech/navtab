@@ -1,0 +1,11 @@
+=encoding utf-8
+
+=head1 NAME
+
+navtab - Navigable Tab UI
+
+=head1 DESCRIPTION
+
+User interface where you navigate around a grid.
+
+This is just a prototype for now
